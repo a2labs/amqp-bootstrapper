@@ -1,0 +1,51 @@
+{
+    "name" : "amqp-bootstrapper",
+    "description" : "Finite State Machine that reads a configuration and stands up your RabbitMQ exchanges, queues and bindings in the proper order.",
+    "version" : "0.0.1",
+    "homepage" : "https://github.com/a2labs/amqp-bootstrapper",
+    "repository" : {
+        "type" : "git",
+        "url" : "git://github.com/a2labs/amqp-bootstrapper.git"
+    },
+	"author" : "appendTo, LLC (http://appendTo.com)",
+    "contributors": [
+        {
+            "name" : "Jim Cowart",
+            "email" : "jim@ifandelse.com",
+            "url" : "http://freshbrewedcode.com/jimcowart"
+        }
+    ],
+	"keywords" : [
+		"monologue",
+        "machina",
+        "amqp",
+		"rabbitmq"
+	],
+    "bugs" : {
+        "email" : "PleaseJustUseTheIssuesPage@github.com",
+        "url" : "http://github.com/a2labs/amqp-bootstrapper/issues"
+   },
+	"directories" : { "lib" : "lib" },
+    "main" : "lib/amqp-bootstrapper.js",
+	"engines" : {
+		"node" : ">=0.4.0"
+	},
+	"dependencies" : {
+		"underscore"   : ">=1.4.0",
+		"amqp"         : ">=0.1.4",
+		"monologue.js" : ">=0.1.4",
+		"machina"      : ">=0.3.1"
+	},
+	"bundleDependencies" : [],
+	"devDependencies" : {},
+    "licenses" : [
+        {
+            "type" : "MIT",
+            "url" : "http://www.opensource.org/licenses/mit-license.php"
+        },
+        {
+	        "type" : "GPL",
+	        "url"  : "http://opensource.org/licenses/GPL-2.0"
+        }
+    ]
+}
