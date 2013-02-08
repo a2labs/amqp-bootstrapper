@@ -3,7 +3,7 @@
 ### What is it?
 The amqp-bootstrapper module provides a finite state machine tailored for managing the setup process of exchanges, queues and bindings on a RabbitMQ broker. It wraps both publish and subscribe operations, allowing publishing to occur as the FSM still stands up the broker endpoint(s). Any publish calls that occur during intialization are immediately replayed as soon as the FSM transitions into the "ready" state.  In addition, the FSM's event emitter is based on [monologue.js](), so that any messages coming in from the broker are emitted as events, with the routingKey as the event topic (and monologue's binding rules allow you to bind using wildcards, etc. - matching AMQP sematics).
 
-### Including it in Your Project(
+### Including it in Your Project
 amqp-bootstrapper takes a dependency on [underscore(http://underscorejs.org/), [machina](https://github.com/ifandelse/machina.js), [monologue.js](https://github.com/postaljs/monologue.js) and [amqp](https://npmjs.org/package/amqp), and returns factory function that takes those modules as dependencies:
 
 ```javascript
