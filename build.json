@@ -3,5 +3,14 @@
 		"paths" : {
 			"/"         : "./"
 		}
+	},
+
+	"anvil.testem": {
+		"launchers": {
+			"Mocha": {
+				"command": "mocha spec/*.spec.js --timeout 20000 --reporter spec"
+			}
+		},
+		"launch": "Mocha"
 	}
 }

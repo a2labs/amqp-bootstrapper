@@ -1,7 +1,7 @@
 {
     "name" : "amqp-bootstrapper",
     "description" : "Finite State Machine that reads a configuration and stands up your RabbitMQ exchanges, queues and bindings in the proper order.",
-    "version" : "0.0.1",
+    "version" : "0.1.0",
     "homepage" : "https://github.com/a2labs/amqp-bootstrapper",
     "repository" : {
         "type" : "git",

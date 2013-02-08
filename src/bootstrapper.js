@@ -1,9 +1,17 @@
 /*global _,amqp*/
 var getDefaults = function() {
 	return {
+		// will hold references to amqp queue objects
 		queues        : {},
+
+		// will hold references to amqp exchange objects
 		exchanges     : {},
+
+		// will hold ctag values for each binding setup
 		subscriptions : {},
+
+		// baseline constraints for each state. The checkList(s)
+		// will be populated as the FSM starts.
 		constraints   : {
 			uninitialized: {
 				nextState: "connecting"
@@ -43,6 +51,11 @@ var Bootstrapper = ConstraintFsm.extend({
 		this.handle("publish", routingKey, message, options, callback);
 	},
 
+	// This is a top-level "catch-all" handler for any state that receives
+	// an input event for which it doesn't have a named handler to invoke.
+	// This means that publish calls can be happening while the FSM stands
+	// all the rabbitmq pieces up, and the publishes will happen once the
+	// FSM transitions into "ready".
 	"*" : function() {
 		this.deferUntilTransition();
 	},
@@ -51,7 +64,7 @@ var Bootstrapper = ConstraintFsm.extend({
 		uninitialized: {
 			start : function() {
 				var self = this;
-				// set up constraints for queues and exchanges
+				// set up constraints for queues, bindings and exchanges
 				_.each(self.config.exchanges || {}, function(exchange, name) {
 					self.constraints.exchangeInit.checkList[name] = false;
 				});
@@ -86,7 +99,7 @@ var Bootstrapper = ConstraintFsm.extend({
 				_.each(self.config.exchanges, function(options, name) {
 					self.conn.exchange(name, options, function(exch) {
 						self.exchanges[name] = exch;
-						self.markConstraint(exch.name);
+						self.markConstraint.call(self, exch.name);
 						self.checkIfReady();
 					});
 				});
@@ -106,7 +119,7 @@ var Bootstrapper = ConstraintFsm.extend({
 						}).addCallback(function(ok) {
 							self.subscriptions[name] = ok.consumerTag;
 						 });
-						self.markConstraint(name);
+						self.markConstraint.call(self, name);
 						self.checkIfReady();
 					});
 				});
@@ -120,14 +133,19 @@ var Bootstrapper = ConstraintFsm.extend({
 				}
 				_.each(self.config.queues, function(qConfig, qName) {
 					_.each(qConfig.bindings, function(routingKey, exchangeName){
-						self.queues[qName].bind(exchangeName, routingKey);
-						self.markConstraint(exchangeName);
+						_.each(_.isArray(routingKey) ? routingKey : [ routingKey ], function(rKey) {
+							self.queues[qName].bind(exchangeName, rKey);
+						});
+						self.markConstraint.call(self, exchangeName);
 						self.checkIfReady();
 					});
 				});
 			}
 		},
 		ready: {
+			_onEnter: function() {
+				this.emit('ready');
+			},
 			publish: function(routingKey, message, options, callback) {
 				var exchange = this.exchanges[this.config.routingKeys[routingKey]];
 				if(exchange) {
